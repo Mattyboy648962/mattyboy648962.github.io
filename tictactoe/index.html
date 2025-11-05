@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      padding-top: 50px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+      justify-content: center;
+    }
+    .cell {
+      background-color: #333;
+      font-size: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+    .cell:hover {
+      background-color: #555;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #444;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic-Tac-Toe</h1>
+  <div class="board" id="board"></div>
+  <p id="status">Your turn!</p>
+  <button onclick="resetGame()">Restart</button>
+
+  <script>
+    const board = document.getElementById("board");
+    const statusText = document.getElementById("status");
+    let cells = Array(9).fill("");
+    let gameOver = false;
+
+    // create cells
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.addEventListener("click", () => playerMove(i));
+      board.appendChild(cell);
+    }
+
+    function playerMove(i) {
+      if (cells[i] || gameOver) return;
+      cells[i] = "X";
+      updateBoard();
+      if (checkWinner("X")) {
+        statusText.textContent = "You win! 🎉";
+        gameOver = true;
+        return;
+      }
+      if (!cells.includes("")) {
+        statusText.textContent = "It's a tie!";
+        gameOver = true;
+        return;
+      }
+      statusText.textContent = "AI's turn...";
+      setTimeout(aiMove, 500);
+    }
+
+    function aiMove() {
+      let move = findBestMove();
+      cells[move] = "O";
+      updateBoard();
+      if (checkWinner("O")) {
+        statusText.textContent = "AI wins! 🤖";
+        gameOver = true;
+        return;
+      }
+      if (!cells.includes("")) {
+        statusText.textContent = "It's a tie!";
+        gameOver = true;
+        return;
+      }
+      statusText.textContent = "Your turn!";
+    }
+
+    function findBestMove() {
+      // 1. win if possible
+      for (let i = 0; i < 9; i++) {
+        if (!cells[i]) {
+          cells[i] = "O";
+          if (checkWinner("O")) { cells[i] = ""; return i; }
+          cells[i] = "";
+        }
+      }
+      // 2. block player
+      for (let i = 0; i < 9; i++) {
+        if (!cells[i]) {
+          cells[i] = "X";
+          if (checkWinner("X")) { cells[i] = ""; return i; }
+          cells[i] = "";
+        }
+      }
+      // 3. take center
+      if (!cells[4]) return 4;
+      // 4. take corners
+      const corners = [0, 2, 6, 8];
+      const openCorners = corners.filter(i => !cells[i]);
+      if (openCorners.length) return openCorners[Math.floor(Math.random() * openCorners.length)];
+      // 5. take any open space
+      const open = cells.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
+      return open[Math.floor(Math.random() * open.length)];
+    }
+
+    function updateBoard() {
+      const cellDivs = board.querySelectorAll(".cell");
+      cells.forEach((val, i) => {
+        cellDivs[i].textContent = val;
+      });
+    }
+
+    function checkWinner(player) {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winPatterns.some(pattern =>
+        pattern.every(index => cells[index] === player)
+      );
+    }
+
+    function resetGame() {
+      cells = Array(9).fill("");
+      gameOver = false;
+      updateBoard();
+      statusText.textContent = "Your turn!";
+    }
+  </script>
+</body>
+</html>

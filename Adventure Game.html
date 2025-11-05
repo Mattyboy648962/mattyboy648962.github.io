@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventure Game</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 40px;
+    }
+
+    #game-box {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 15px #444;
+    }
+
+    #output {
+      min-height: 150px;
+      text-align: left;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      font-size: 18px;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #333;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-box">
+    <h1>Adventure Game</h1>
+    <div id="output"></div>
+    <input type="text" id="playerInput" placeholder="Type your choice...">
+    <button onclick="submitChoice()">Submit</button>
+  </div>
+
+  <script>
+    let step = 0;
+
+    function display(text) {
+      document.getElementById("output").textContent = text;
+    }
+
+    function submitChoice() {
+      const input = document.getElementById("playerInput").value.toLowerCase();
+      document.getElementById("playerInput").value = "";
+
+      if (step === 0) {
+        display("You wake up in a dark forest. Do you go LEFT or RIGHT?");
+        step = 1;
+      } 
+      else if (step === 1) {
+        if (input === "left") {
+          display("You walk left and find a river. Do you SWIM across or FOLLOW it?");
+          step = 2;
+        } else if (input === "right") {
+          display("You walk right and find a cave. Do you ENTER or KEEP WALKING?");
+          step = 3;
+        } else {
+          display("Please choose LEFT or RIGHT.");
+        }
+      }
+      else if (step === 2) {
+        if (input === "swim") {
+          display("You try to swim but the current is too strong. You barely escape alive!\n\nTHE END.");
+          step = 99;
+        } else if (input === "follow") {
+          display("You follow the river and find a small village. You're safe!\n\nTHE END.");
+          step = 99;
+        } else {
+          display("Choose SWIM or FOLLOW.");
+        }
+      }
+      else if (step === 3) {
+        if (input === "enter") {
+          display("You enter the cave and find treasure! You're rich!\n\nTHE END.");
+          step = 99;
+        } else if (input === "keep walking") {
+          display("You keep walking until night falls. A wolf howls nearby... maybe that was a mistake.\n\nTHE END.");
+          step = 99;
+        } else {
+          display("Choose ENTER or KEEP WALKING.");
+        }
+      } 
+      else if (step === 99) {
+        display("Type 'restart' to play again!");
+        if (input === "restart") {
+          step = 0;
+          display("You wake up in a dark forest. Do you go LEFT or RIGHT?");
+          step = 1;
+        }
+      }
+    }
+
+    // Start game automatically
+    display("You wake up in a dark forest. Do you go LEFT or RIGHT?");
+    step = 1;
+  </script>
+</body>
+</html>
